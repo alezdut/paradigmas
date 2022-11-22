@@ -18,6 +18,7 @@ public class DoctorDao implements DAO<Doctor, Integer> {
     final String DELETE = "DELETE FROM Doctor WHERE id = ?;";
     final String GETALL = "SELECT id, name, id_speciality, id_health_insurance FROM Doctor;";
     final String GETONE = "SELECT id, name, id_speciality, id_health_insurance FROM Doctor WHERE id = ?;";
+    final String GETBYNAME = "SELECT id, name, id_speciality, id_health_insurance FROM Doctor WHERE name = ?;";
     private Connection conn;
 
     public DoctorDao(Connection conn){
@@ -97,7 +98,7 @@ public class DoctorDao implements DAO<Doctor, Integer> {
             Doctor doctor = new Doctor();
             doctor.setId(rs.getInt("id"));
             doctor.setName(rs.getString("name"));
-            doctor.setSpecialityId(rs.getInt("id_specialty"));
+            doctor.setSpecialityId(rs.getInt("id_speciality"));
             doctor.setHealthInsuranceId(rs.getInt("id_health_insurance"));
             return doctor;
         }
@@ -135,6 +136,30 @@ public class DoctorDao implements DAO<Doctor, Integer> {
         try {
             stat = conn.prepareStatement(GETONE);
             stat.setInt(1, id);
+            rs = stat.executeQuery();
+
+            if(rs.next()) {
+                doctor = convert(rs);
+            }
+            else {
+                throw new DAOException("No se Encontro el registro");
+            }
+        }
+        catch (SQLException e){
+            throw new DAOException("Error al ejecutar SQL", e);
+        }finally {
+            Close.close(rs, stat);
+        }
+        return doctor;
+    }
+
+    public Doctor getByName(String name) throws DAOException{
+        PreparedStatement stat = null;
+        ResultSet rs = null;
+        Doctor doctor = null;
+        try {
+            stat = conn.prepareStatement(GETBYNAME);
+            stat.setString(1, name);
             rs = stat.executeQuery();
 
             if(rs.next()) {

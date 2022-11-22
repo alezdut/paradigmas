@@ -19,4 +19,9 @@ public class Hospital {
     public void setName(String name) {
         this.name = name;
     }
+
+    @Override
+    public String toString() {
+        return "\n Id: " + id + " Nombre: " + name;
+    }
 }

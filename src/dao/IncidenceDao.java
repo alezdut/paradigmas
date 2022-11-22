@@ -14,7 +14,7 @@ import java.util.List;
 public class IncidenceDao implements DAO<Incidence, Integer> {
 
     final String INSERT = "INSERT INTO Incidence (description, date, state, id_patient, id_doctor) VALUES(?, ?, ?, ?, ?);";
-    final String UPDATE = "UPDATE Incidence SET id = ?, name = ?, description = ?, date = ?, state = ?, id_patient = ?, id_doctor = ? WHERE id = ?;";
+    final String UPDATE = "UPDATE Incidence SET  description = ?, state = ?, id_patient = ?, id_doctor = ? WHERE id = ?;";
     final String DELETE = "DELETE FROM Incidence WHERE id = ?;";
     final String GETALL = "SELECT id, description, date, state, id_patient, id_doctor FROM Incidence;";
     final String GETONE = "SELECT id, description, date, state, id_patient, id_doctor FROM Incidence WHERE id = ?;";
@@ -57,13 +57,11 @@ public class IncidenceDao implements DAO<Incidence, Integer> {
         PreparedStatement stat = null;
         try {
             stat = conn.prepareStatement(UPDATE);
-            stat.setInt(1,a.getId());
-            stat.setString(2, a.getDescription());
-            stat.setString(3, a.getDate());
-            stat.setString(4, a.getState());
-            stat.setInt(5, a.getPatientId());
-            stat.setInt(6, a.getDoctorId());
-            stat.setInt(7, id);
+            stat.setString(1, a.getDescription());
+            stat.setString(2, a.getState());
+            stat.setInt(3, a.getPatientId());
+            stat.setInt(4, a.getDoctorId());
+            stat.setInt(5, id);
             if(stat.executeUpdate() == 0){
                 throw new DAOException("Error al guardar la información");
             };

@@ -1,6 +1,7 @@
 package dao;
 
 import dao.util.Close;
+import dto.Doctor;
 import dto.Incidence;
 import dto.Patient;
 
@@ -18,6 +19,7 @@ public class PatientDao implements DAO<Patient, Integer> {
     final String DELETE = "DELETE FROM Patient WHERE id = ?;";
     final String GETALL = "SELECT id, name, id_health_insurance FROM Patient;";
     final String GETONE = "SELECT id, name, id_health_insurance FROM Patient WHERE id = ?;";
+    final String GETBYNAME = "SELECT id, name, id_health_insurance FROM Patient WHERE name = ?;";
     private Connection conn;
 
     public PatientDao(Connection conn){
@@ -135,6 +137,29 @@ public class PatientDao implements DAO<Patient, Integer> {
             }
             else {
                 throw new DAOException("No se encontro el registro");
+            }
+        }
+        catch (SQLException e){
+            throw new DAOException("Error al ejecutar SQL", e);
+        }finally {
+            Close.close(rs, stat);
+        }
+        return patient;
+    }
+    public Patient getByName(String name) throws DAOException{
+        PreparedStatement stat = null;
+        ResultSet rs = null;
+        Patient patient = null;
+        try {
+            stat = conn.prepareStatement(GETBYNAME);
+            stat.setString(1, name);
+            rs = stat.executeQuery();
+
+            if(rs.next()) {
+                patient = convert(rs);
+            }
+            else {
+                throw new DAOException("No se Encontro el registro");
             }
         }
         catch (SQLException e){
